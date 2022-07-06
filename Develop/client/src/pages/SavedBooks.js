@@ -1,19 +1,19 @@
 import React from 'react';
 import { Jumbotron, Container, CardColumns, Card, Button } from 'react-bootstrap';
 
-import { deleteBook } from '../utils/API';
+//import { deleteBook } from '../utils/API';
 import Auth from '../utils/auth';
 import { removeBookId } from '../utils/localStorage';
 
 import { useQuery, useMutation } from '@apollo/client';
-
 import { QUERY_ME } from '../utils/queries';
+import { DELETE_BOOK } from '../utils/mutations';
 
 const SavedBooks = () => {
 
   const { loading, data } = useQuery(QUERY_ME);
   //console.log(data)
-
+  const [bookDelete, { error }] = useMutation(DELETE_BOOK)
   const userData = data?.me || {};
 
   if (loading) {
@@ -21,34 +21,46 @@ const SavedBooks = () => {
   }
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
-  const handleDeleteBook = async (bookId) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
+  
+  // const HandleDeleteBook = async (bookId) => {
+  //   console.log(bookId)
+  //   const [bookDelete] = useMutation(DELETE_BOOK)
 
-    if (!token) {
-      return false;
-    }
+    // const token = Auth.loggedIn() ? Auth.getToken() : null;
 
-    try {
-      const response = await deleteBook(bookId, token);
+    // if (!token) {
+    //   return false;
+    // }
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+    // try {
+    //   const response = await deleteBook(bookId, token);
 
-      const updatedUser = await response.json();
-      //setUserData(updatedUser);
-      // upon success, remove book's id from localStorage
-      removeBookId(bookId);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    //   if (!response.ok) {
+    //     throw new Error('something went wrong!');
+    //   }
+
+    //   const updatedUser = await response.json();
+    //   //setUserData(updatedUser);
+    //   // upon success, remove book's id from localStorage
+    //   removeBookId(bookId);
+    // } catch (err) {
+    //   console.error(err);
+    // }
+ // };
 
   // if data isn't here yet, say so
   // if (!userDataLength) {
   //   return <h2>LOADING...</h2>;
   // }
-  console.log (userData)
+  //console.log (userData)
+
+  const HandleDeleteBook = async (bookId) => {
+      debugger;
+      console.log(bookId)
+      bookDelete(bookId)
+
+     // const [bookDelete, { data, loading, error }] = useMutation(DELETE_BOOK)
+  }
   return (
     
     <>
@@ -72,7 +84,7 @@ const SavedBooks = () => {
                   <Card.Title>{book.title}</Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
-                  <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
+                  <Button className='btn-block btn-danger' onClick={() => HandleDeleteBook(book.bookId)}>
                     Delete this Book!
                   </Button>
                 </Card.Body>
