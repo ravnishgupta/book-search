@@ -12,55 +12,35 @@ import { DELETE_BOOK } from '../utils/mutations';
 const SavedBooks = () => {
 
   const { loading, data } = useQuery(QUERY_ME);
-  //console.log(data)
-  const [bookDelete, { error }] = useMutation(DELETE_BOOK)
+  const [deleteBook, { error }] = useMutation(DELETE_BOOK)
   const userData = data?.me || {};
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   // create function that accepts the book's mongo _id value as param and deletes the book from the database
   
-  // const HandleDeleteBook = async (bookId) => {
-  //   console.log(bookId)
-  //   const [bookDelete] = useMutation(DELETE_BOOK)
+  const handleDeleteBook = async (bookId) => {
+    const token = Auth.loggedIn() ? Auth.getToken() : null;
+    if (!token) {
+      return false;
+    }
+    try {
+      const response = await deleteBook({
+        variables: { bookId: bookId },
+      });
 
-    // const token = Auth.loggedIn() ? Auth.getToken() : null;
+      if (!response) {
+        throw new Error("something went wrong!");
+      }
+      removeBookId(bookId);
+    } catch (err) {
+      console.error(error);
+    }
+  };
 
-    // if (!token) {
-    //   return false;
-    // }
-
-    // try {
-    //   const response = await deleteBook(bookId, token);
-
-    //   if (!response.ok) {
-    //     throw new Error('something went wrong!');
-    //   }
-
-    //   const updatedUser = await response.json();
-    //   //setUserData(updatedUser);
-    //   // upon success, remove book's id from localStorage
-    //   removeBookId(bookId);
-    // } catch (err) {
-    //   console.error(err);
-    // }
- // };
-
-  // if data isn't here yet, say so
+  // //if data isn't here yet, say so
   // if (!userDataLength) {
   //   return <h2>LOADING...</h2>;
   // }
-  //console.log (userData)
-
-  const HandleDeleteBook = async (bookId) => {
-      debugger;
-      console.log(bookId)
-      bookDelete(bookId)
-
-     // const [bookDelete, { data, loading, error }] = useMutation(DELETE_BOOK)
-  }
+  
   return (
     
     <>
@@ -84,7 +64,7 @@ const SavedBooks = () => {
                   <Card.Title>{book.title}</Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
-                  <Button className='btn-block btn-danger' onClick={() => HandleDeleteBook(book.bookId)}>
+                  <Button className='btn-block btn-danger' onClick={() => handleDeleteBook(book.bookId)}>
                     Delete this Book!
                   </Button>
                 </Card.Body>
