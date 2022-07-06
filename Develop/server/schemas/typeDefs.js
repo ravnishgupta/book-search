@@ -40,7 +40,7 @@ type Query {
     login(email: String!, password: String!): Auth
     addUser(username: String!, email: String!, password: String!): Auth
     saveBook(input: SavedBookInput): User
-    deleteBook(bookID:String!): User
+    deleteBook(bookId:String!): User
   }
   
   `
