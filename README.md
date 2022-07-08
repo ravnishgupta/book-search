@@ -11,6 +11,7 @@ The application uses Google Books API to get book results based on user input. I
 
 ## Video
 
+https://user-images.githubusercontent.com/34320760/178037266-36ae5660-c1cc-4ce0-97ed-be7213532fd4.mov
 
 ## User Story
 ```
